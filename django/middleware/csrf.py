@@ -239,7 +239,10 @@ class CsrfViewMiddleware(object):
         # Set the CSRF cookie even if it's already set, so we renew the expiry timer.
         response.set_cookie(settings.CSRF_COOKIE_NAME,
                 request.META["CSRF_COOKIE"], max_age = 60 * 60 * 24 * 7 * 52,
-                domain=settings.CSRF_COOKIE_DOMAIN)
+                domain=settings.CSRF_COOKIE_DOMAIN,
+                path=settings.CSRF_COOKIE_PATH,
+                secure=settings.CSRF_COOKIE_SECURE,
+                httponly=settings.CSRF_COOKIE_HTTPONLY)
         # Content varies with the CSRF cookie, so set the Vary header.
         patch_vary_headers(response, ('Cookie',))
         response.csrf_processing_done = True

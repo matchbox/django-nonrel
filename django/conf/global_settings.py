@@ -502,6 +502,9 @@ CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 # Name and domain for CSRF cookie.
 CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_DOMAIN = None
+CSRF_COOKIE_PATH = '/'
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
 
 ############
 # MESSAGES #
