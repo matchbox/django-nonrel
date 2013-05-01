@@ -1605,16 +1605,32 @@ class Query(object):
         possibly with a direction prefix ('-' or '?') -- or ordinals,
         corresponding to column positions in the 'select' list.
 
+        Ordering arguments on fields that have a db_column that is
+        different from the field name are changed to the db_column.
+
         If 'ordering' is empty, all ordering is cleared from the query.
         """
         errors = []
+        db_column_ordering = []
         for item in ordering:
-            if not ORDER_PATTERN.match(item):
+            matched = ORDER_PATTERN.match(item)
+            if not matched:
                 errors.append(item)
+            else:
+                operator = matched.group(1)
+                order_name = matched.group(2)
+                try:
+                    db_column_name = self.model._meta.get_field_by_name(
+                        order_name)[0].db_column
+                    if db_column_name:
+                        order_name = db_column_name
+                except FieldDoesNotExist:
+                    pass
+                db_column_ordering.append('%s%s' % (operator, order_name))
         if errors:
             raise FieldError('Invalid order_by arguments: %s' % errors)
         if ordering:
-            self.order_by.extend(ordering)
+            self.order_by.extend(db_column_ordering)
         else:
             self.default_ordering = False
 
